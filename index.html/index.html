@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeonStudy - Tudo em Um</title>
+    <style>
+        :root {
+            --bg-color: #121214;
+            --card-bg: rgba(30, 30, 35, 0.6);
+            --neon-pink: #ff007f;
+            --neon-pink-glow: rgba(255, 0, 127, 0.4);
+            --text-color: #e1e1e6;
+            --text-muted: #8d8d99;
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            background-image: radial-gradient(circle at 50% 20%, #251020 0%, transparent 50%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #fff;
+            text-shadow: 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink-glow);
+        }
+
+        /* Layout Grid Principal de 3 Colunas */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 1200px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Painéis de Vidro (Glassmorphism) */
+        .glass-panel {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            border-bottom: 2px solid var(--glass-border);
+            padding-bottom: 8px;
+            color: #fff;
+        }
+
+        /* Tags de Matérias */
+        .subject-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .subject-tag {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .subject-tag:hover {
+            border-color: var(--neon-pink);
+            background: rgba(255, 0, 127, 0.1);
+            box-shadow: 0 0 8px var(--neon-pink-glow);
+        }
+
+        /* Formulários e Inputs */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        input, select {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            padding: 10px;
+            border-radius: 8px;
+            color: #fff;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 10px var(--neon-pink-glow);
+        }
+
+        button {
+            background: linear-gradient(45deg, var(--neon-pink), #ff0055);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            box-shadow: 0 0 15px var(--neon-pink);
+            transform: scale(1.02);
+        }
+
+        /* Central do Cronômetro/Relógio */
+        .clock-display {
+            font-size: 2.8rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 15px var(--neon-pink-glow);
+            text-align: center;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--text-muted);
+            color: var(--text-muted);
+        }
+        .btn-secondary:hover {
+            border-color: #fff;
+            color: #fff;
+            box-shadow: none;
+        }
+
+        /* Calendário Semanal */
+        .week-calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            height: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .week-calendar { grid-template-columns: 1fr; }
+        }
+
+        .day-column {
+            background: rgba(20, 20, 25, 0.4);
+            border-radius: 10px;
+            padding: 12px 8px;
+            min-height: 450px;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            text-align: center;
+        }
+
+        .day-column h3 {
+            color: var(--neon-pink);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .slots-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .scheduled-item {
+            background: rgba(255, 255, 255, 0.06);
+            border-left: 3px solid var(--neon-pink);
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            text-align: left;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .scheduled-item .time {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            margin-top: 3px;
+        }
+
+        /* Gráfico de Visão Geral */
+        .chart-placeholder {
+            height: 100px;
+            background: linear-gradient(transparent 95%, rgba(255,0,127,0.05) 95%),
+                        linear-gradient(90deg, transparent 95%, rgba(255,0,127,0.05) 95%);
+            background-size: 15px 15px;
+            border-radius: 8px;
+            border: 1px dashed var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>NeonStudy</h1>
+    </header>
+
+    <main class="dashboard">
+        
+        <section class="glass-panel">
+            <h2>📚 Componentes</h2>
+            <div class="subject-tags" id="subjectsContainer">
+                <span class="subject-tag">Português</span>
+                <span class="subject-tag">Matemática</span>
+                <span class="subject-tag">História</span>
+                <span class="subject-tag">Geografia</span>
+                <span class="subject-tag">Física</span>
+                <span class="subject-tag">Química</span>
+                <span class="subject-tag">Sociologia</span>
+                <span class="subject-tag">Filosofia</span>
+                <span class="subject-tag">Inglês</span>
+                <span class="subject-tag">Espanhol</span>
+                <span class="subject-tag">Redação</span>
+                <span class="subject-tag">Artes</span>
+            </div>
+
+            <h2>➕ Agendar Matéria</h2>
+            <form id="addSubjectForm" class="form-group">
+                <input type="text" id="newSubjectName" placeholder="Nome da Matéria..." required>
+                <select id="targetDay" required>
+                    <option value="" disabled selected>Escolha o Dia</option>
+                    <option value="segunda">Segunda-feira</option>
+                    <option value="terça">Terça-feira</option>
+                    <option value="quarta">Quarta-feira</option>
+                    <option value="quinta">Quinta-feira</option>
+                    <option value="sexta">Sexta-feira</option>
+                    <option value="sábado">Sábado</option>
+                    <option value="domingo">Domingo</option>
+                </select>
+                <input type="time" id="targetTime" required>
+                <button type="submit">Inserir no Cronograma</button>
+            </form>
+        </section>
+
+        <section class="glass-panel">
+            <h2>📅 Cronograma Semanal</h2>
+            <div class="week-calendar">
+                <div class="day-column" data-day="segunda"><h3>Seg</h3><div class="slots-container"></div></div>
+                <div class="day-column" data-day="terça"><h3>Ter</h3><div class="slots-container"></div></div>
+                <div class="day-column" data-day="quarta"><h3>Qua</h3><div class="slots-container"></div></div>
+                <div class="day-column" data-day="quinta"><h3>Qui</h3><div class="slots-container"></div></div>
+                <div class="day-column" data-day="sexta"><h3>Sex</h3><div class="slots-container"></div></div>
+                <div class="day-column" data-day="sábado"><h3>Sáb</h3><div class="slots-container"></div></div>
+                <div class="day-column" data-day="domingo"><h3>Dom</h3><div class="slots-container"></div></div>
+            </div>
+        </section>
+
+        <section style="display: flex; flex-direction: column; gap: 20px;">
+            
+            <div class="glass-panel">
+                <h2>📊 Visão Geral</h2>
+                <div class="chart-placeholder">
+                    <p>[ Gráfico de Distribuição ]</p>
+                </div>
+            </div>
+
+            <div class="glass-panel">
+                <h2>🕒 Horário Real</h2>
+                <div class="clock-display" id="liveClock">00:00:00</div>
+
+                <h2>⏱️ Foco (Máx 60 min)</h2>
+                <input type="number" id="minutesInput" min="1" max="60" value="25" style="text-align: center;">
+                <div class="clock-display" id="timerDisplay">25:00</div>
+                
+                <div class="timer-controls">
+                    <button id="startBtn" style="flex: 1;">Iniciar</button>
+                    <button id="resetBtn" class="btn-secondary">Resetar</button>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- LÓGICA DO CRONOGRAMA ---
+            const addSubjectForm = document.getElementById('addSubjectForm');
+            const subjectsContainer = document.getElementById('subjectsContainer');
+
+            addSubjectForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = document.getElementById('newSubjectName').value.trim();
+                const day = document.getElementById('targetDay').value;
+                const time = document.getElementById('targetTime').value;
+
+                const item = document.createElement('div');
+                item.className = 'scheduled-item';
+                item.innerHTML = `<strong>${name}</strong><span class="time">⏰ ${time}</span>`;
+
+                const container = document.querySelector(`.day-column[data-day="${day}"] .slots-container`);
+                if (container) {
+                    container.appendChild(item);
+                    addTag(name);
+                    addSubjectForm.reset();
+                }
+            });
+
+            function addTag(name) {
+                const tags = Array.from(subjectsContainer.querySelectorAll('.subject-tag')).map(t => t.textContent.toLowerCase());
+                if (!tags.includes(name.toLowerCase())) {
+                    const tag = document.createElement('span');
+                    tag.className = 'subject-tag';
+                    tag.textContent = name;
+                    subjectsContainer.appendChild(tag);
+                }
+            }
+
+            // --- LÓGICA DO RELÓGIO ATUAL ---
+            const liveClock = document.getElementById('liveClock');
+            function updateClock() {
+                liveClock.textContent = new Date().toLocaleTimeString('pt-BR');
+            }
+            setInterval(updateClock, 1000);
+            updateClock();
+
+            // --- LÓGICA DO CRONÔMETRO ---
+            let countdown;
+            const timerDisplay = document.getElementById('timerDisplay');
+            const minutesInput = document.getElementById('minutesInput');
+            const startBtn = document.getElementById('startBtn');
+            const resetBtn = document.getElementById('resetBtn');
+
+            minutesInput.addEventListener('input', function() {
+                if (this.value > 60) this.value = 60;
+                if (this.value < 1) this.value = 1;
+                timerDisplay.textContent = `${String(this.value).padStart(2, '0')}:00`;
+            });
+
+            startBtn.addEventListener('click', () => {
+                clearInterval(countdown);
+                let timeLeft = (parseInt(minutesInput.value) || 25) * 60;
+
+                countdown = setInterval(() => {
+                    const min = Math.floor(timeLeft / 60);
+                    const sec = timeLeft % 60;
+                    timerDisplay.textContent = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+
+                    if (timeLeft <= 0) {
+                        clearInterval(countdown);
+                        alert("🚨 Alarme! Fim da sua sessão de estudos.");
+                    }
+                    timeLeft--;
+                }, 1000);
+            });
+
+            resetBtn.addEventListener('click', () => {
+                clearInterval(countdown);
+                timerDisplay.textContent = `${String(minutesInput.value).padStart(2, '0')}:00`;
+            });
+        });
+    </script>
+</body>
+</html>
