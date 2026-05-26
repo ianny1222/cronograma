@@ -1,0 +1,53 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const addSubjectForm = document.getElementById('addSubjectForm');
+    const subjectsContainer = document.getElementById('subjectsContainer');
+
+    if (addSubjectForm) {
+        addSubjectForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Captura os dados inseridos pelo usuário
+            const subjectName = document.getElementById('newSubjectName').value.trim();
+            const targetDay = document.getElementById('targetDay').value;
+            const targetTime = document.getElementById('targetTime').value;
+
+            if (!subjectName || !targetDay || !targetTime) return;
+
+            // Cria o elemento HTML correspondente à matéria dentro do calendário
+            const scheduledItem = document.createElement('div');
+            scheduledItem.className = 'scheduled-item';
+            scheduledItem.innerHTML = `
+                <strong>${subjectName}</strong>
+                <span class="time">⏰ ${targetTime}</span>
+            `;
+
+            // Localiza a coluna do respectivo dia da semana
+            const dayColumn = document.querySelector(`.day-column[data-day="${targetDay}"] .slots-container`);
+            
+            if (dayColumn) {
+                dayColumn.appendChild(scheduledItem);
+                
+                // Adiciona dinamicamente a nova matéria à lista superior (caso ainda não exista)
+                addTagToPool(subjectName);
+                
+                // Limpa os campos do formulário após o sucesso
+                addSubjectForm.reset();
+            }
+        });
+    }
+
+    // Função interna para alimentar a lista de tags/componentes curriculares
+    function addTagToPool(name) {
+        if (!subjectsContainer) return;
+
+        const currentTags = Array.from(subjectsContainer.querySelectorAll('.subject-tag'))
+                                 .map(tag => tag.textContent.toLowerCase());
+        
+        if (!currentTags.includes(name.toLowerCase())) {
+            const newTag = document.createElement('span');
+            newTag.className = 'subject-tag';
+            newTag.textContent = name;
+            subjectsContainer.appendChild(newTag);
+        }
+    }
+});

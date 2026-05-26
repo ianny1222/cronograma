@@ -1,0 +1,73 @@
+document.addEventListener('DOMContentLoaded', () => {
+    // --- Elementos do Relógio ---
+    const liveClock = document.getElementById('liveClock');
+
+    // --- Elementos do Cronômetro ---
+    const timerDisplay = document.getElementById('timerDisplay');
+    const minutesInput = document.getElementById('minutesInput');
+    const startBtn = document.getElementById('startBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    let countdown;
+    let timeLeft;
+
+    // 1. Atualização do Relógio Digital em tempo real
+    function updateClock() {
+        if (liveClock) {
+            const now = new Date();
+            liveClock.textContent = now.toLocaleTimeString('pt-BR');
+        }
+    }
+    if (liveClock) {
+        setInterval(updateClock, 1000);
+        updateClock();
+    }
+
+    // 2. Ouvinte para restringir o Input a no máximo 60 minutos
+    if (minutesInput && timerDisplay) {
+        minutesInput.addEventListener('input', function() {
+            let val = parseInt(this.value);
+            if (val > 60) this.value = 60;
+            if (val < 1 || isNaN(val)) this.value = 1;
+            
+            timerDisplay.textContent = `${String(this.value).padStart(2, '0')}:00`;
+        });
+    }
+
+    // 3. Função que inicia a contagem regressiva
+    function startTimer() {
+        clearInterval(countdown);
+        
+        const minutes = parseInt(minutesInput.value) || 25;
+        timeLeft = minutes * 60;
+
+        countdown = setInterval(() => {
+            const minutesLeft = Math.floor(timeLeft / 60);
+            const secondsLeft = timeLeft % 60;
+
+            timerDisplay.textContent = `${String(minutesLeft).padStart(2, '0')}:${String(secondsLeft).padStart(2, '0')}`;
+
+            // Quando o tempo zera, dispara o alarme
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                timerDisplay.textContent = "00:00";
+                setTimeout(() => {
+                    alert("🚨 Alarme! Fim da sessão de estudos. Faça uma pausa!");
+                }, 10);
+            }
+
+            timeLeft--;
+        }, 1000);
+    }
+
+    // 4. Configuração dos botões de Ação
+    if (startBtn) startBtn.addEventListener('click', startTimer);
+    
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            clearInterval(countdown);
+            const defaultMinutes = minutesInput ? minutesInput.value : 25;
+            timerDisplay.textContent = `${String(defaultMinutes).padStart(2, '0')}:00`;
+        });
+    }
+});
