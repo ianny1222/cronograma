@@ -4,7 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NuLimite - Tudo em Um</title>
-    <style>
+    <style><style>
+        /* --- ESTILO DO BOTÃO DE TEMA --- */
+        .theme-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            border: 2px solid var(--neon-pink);
+            background: transparent;
+            color: var(--neon-pink);
+            cursor: pointer;
+            border-radius: 20px;
+            font-weight: bold;
+            transition: 0.3s;
+            z-index: 1000;
+        }
+
+        .theme-btn:hover {
+            background: var(--neon-pink);
+            color: #fff;
+            box-shadow: 0 0 10px var(--neon-pink-glow);
+        }
+
+        /* --- CORES DO MODO CLARO --- */
+        body.light-mode {
+            --bg-color: #f0f2f5;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-color: #1a1a1a;
+            --text-muted: #666666;
+            --glass-border: rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- SUAS CORES PADRÃO (MODO ESCURO) --- */
+        :root {
+            --bg-color: #121214;
+            --card-bg: rgba(30, 30, 35, 0.6);
+            --neon-pink: #ff007f;
+            --neon-pink-glow: rgba(255, 0, 127, 0.4);
+            --text-color: #e1e1e6;
+            --text-muted: #8d8d99;
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
         :root {
             --bg-color: #121214;
             --card-bg: rgba(30, 30, 35, 0.6);
@@ -22,7 +63,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        body {
+        body {<button id="themeToggle" class="theme-btn">🌙 Modo Escuro</button>
             background-color: var(--bg-color);
             color: var(--text-color);
             background-image: radial-gradient(circle at 50% 20%, #251020 0%, transparent 50%);
@@ -335,6 +376,38 @@
                 const day = document.getElementById('targetDay').value;
                 const time = document.getElementById('targetTime').value;
 
+                // Chama a função que cria visualmente o item na tela
+                criarElementoMateria(name, day, time);
+                
+                addTag(name);
+                addSubjectForm.reset();
+                
+                // SALVA no navegador sempre que uma nova matéria é adicionada
+                salvarMaterias();
+// --- LÓGICA DE TEMA CLARO / ESCURO ---
+            const themeToggle = document.getElementById('themeToggle');
+            const temaSalvo = localStorage.getItem('NuLimite_tema');
+            
+            if (temaSalvo === 'claro') {
+                document.body.classList.add('light-mode');
+                themeToggle.textContent = '☀️ Modo Claro';
+            }
+
+            themeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('light-mode');
+                
+                if (document.body.classList.contains('light-mode')) {
+                    localStorage.setItem('NuLimite_tema', 'claro');
+                    themeToggle.textContent = '☀️ Modo Claro';
+                } else {
+                    localStorage.setItem('NuLimite_tema', 'escuro');
+                    themeToggle.textContent = '🌙 Modo Escuro';
+                }
+            });
+            });
+
+            // Função isolada para criar a caixinha da matéria (usada na criação e no carregamento)
+            function criarElementoMateria(name, day, time) {
                 const item = document.createElement('div');
                 item.className = 'scheduled-item';
                 item.innerHTML = `<strong>${name}</strong><span class="time">⏰ ${time}</span>`;
@@ -342,10 +415,8 @@
                 const container = document.querySelector(`.day-column[data-day="${day}"] .slots-container`);
                 if (container) {
                     container.appendChild(item);
-                    addTag(name);
-                    addSubjectForm.reset();
                 }
-            });
+            }
 
             function addTag(name) {
                 const tags = Array.from(subjectsContainer.querySelectorAll('.subject-tag')).map(t => t.textContent.toLowerCase());
@@ -356,6 +427,48 @@
                     subjectsContainer.appendChild(tag);
                 }
             }
+
+            // --- FUNÇÕES DE SALVAMENTO (LOCALSTORAGE) ---
+            
+            function salvarMaterias() {
+                const materiasParaSalvar = [];
+                
+                // Varre cada coluna de dia para coletar as matérias inseridas nela
+                document.querySelectorAll('.day-column').forEach(coluna => {
+                    const day = coluna.getAttribute('data-day');
+                    const itens = coluna.querySelectorAll('.scheduled-item');
+                    
+                    itens.forEach(item => {
+                        const name = item.querySelector('strong').textContent;
+                        // Remove o emoji de relógio "⏰ " para pegar apenas o texto da hora
+                        const time = item.querySelector('.time').textContent.replace('⏰ ', '').trim();
+                        
+                        materiasParaSalvar.push({ name, day, time });
+                    });
+                });
+                
+                // Grava a lista completa no armazenamento local do navegador
+                localStorage.setItem('NuLimite_materias', JSON.stringify(materiasParaSalvar));
+            }
+
+            function carregarMaterias() {
+                const dadosSalvos = localStorage.getItem('NuLimite_materias');
+                
+                if (dadosSalvos) {
+                    const materias = JSON.parse(dadosSalvos);
+                    
+                    materias.forEach(materia => {
+                        // Recria o item visual na coluna correta
+                        criarElementoMateria(materia.name, materia.day, materia.time);
+                        // Recria a tag correspondente embaixo
+                        addTag(materia.name);
+                    });
+                }
+            }
+
+            // Carrega automaticamente tudo o que estiver salvo assim que a página abre
+            carregarMaterias();
+
 
             // --- LÓGICA DO RELÓGIO ATUAL ---
             const liveClock = document.getElementById('liveClock');
@@ -399,7 +512,6 @@
                 clearInterval(countdown);
                 timerDisplay.textContent = `${String(minutesInput.value).padStart(2, '0')}:00`;
             });
-        });
-    </script>
+        });    </script>
 </body>
 </html>
