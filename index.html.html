@@ -4,7 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NuLimite - Tudo em Um</title>
-    <style><style>
+    <style>
+        /* --- SUAS CORES PADRÃO (MODO ESCURO) --- */
+        :root {
+            --bg-color: #121214;
+            --card-bg: rgba(30, 30, 35, 0.6);
+            --neon-pink: #ff007f;
+            --neon-pink-glow: rgba(255, 0, 127, 0.4);
+            --text-color: #e1e1e6;
+            --text-muted: #8d8d99;
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --select-bg: #1c1c1f; /* Fundo escuro personalizado para o menu de dias */
+            --input-bg: rgba(0, 0, 0, 0.3);
+        }
+
+        /* --- CORES DO MODO CLARO --- */
+        body.light-mode {
+            --bg-color: #f0f2f5;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-color: #1a1a1a;
+            --text-muted: #666666;
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --select-bg: #f0f2f5;
+            --input-bg: rgba(255, 255, 255, 0.5);
+        }
+
         /* --- ESTILO DO BOTÃO DE TEMA --- */
         .theme-btn {
             position: absolute;
@@ -27,35 +51,6 @@
             box-shadow: 0 0 10px var(--neon-pink-glow);
         }
 
-        /* --- CORES DO MODO CLARO --- */
-        body.light-mode {
-            --bg-color: #f0f2f5;
-            --card-bg: rgba(255, 255, 255, 0.85);
-            --text-color: #1a1a1a;
-            --text-muted: #666666;
-            --glass-border: rgba(0, 0, 0, 0.1);
-        }
-
-        /* --- SUAS CORES PADRÃO (MODO ESCURO) --- */
-        :root {
-            --bg-color: #121214;
-            --card-bg: rgba(30, 30, 35, 0.6);
-            --neon-pink: #ff007f;
-            --neon-pink-glow: rgba(255, 0, 127, 0.4);
-            --text-color: #e1e1e6;
-            --text-muted: #8d8d99;
-            --glass-border: rgba(255, 255, 255, 0.08);
-        }
-        :root {
-            --bg-color: #121214;
-            --card-bg: rgba(30, 30, 35, 0.6);
-            --neon-pink: #ff007f;
-            --neon-pink-glow: rgba(255, 0, 127, 0.4);
-            --text-color: #e1e1e6;
-            --text-muted: #8d8d99;
-            --glass-border: rgba(255, 255, 255, 0.08);
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -63,12 +58,13 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        body {<button id="themeToggle" class="theme-btn">🌙 Modo Escuro</button>
+        body {
             background-color: var(--bg-color);
             color: var(--text-color);
             background-image: radial-gradient(circle at 50% 20%, #251020 0%, transparent 50%);
             min-height: 100vh;
             padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         header {
@@ -133,7 +129,9 @@
             padding: 6px 12px;
             border-radius: 20px;
             font-size: 0.85rem;
+            cursor: pointer;
             transition: all 0.2s;
+            user-select: none;
         }
 
         .subject-tag:hover {
@@ -149,17 +147,33 @@
             gap: 10px;
         }
 
-        input, select {
-            background: rgba(0, 0, 0, 0.3);
+        input, select, textarea {
+            background: var(--input-bg);
             border: 1px solid var(--glass-border);
             padding: 10px;
             border-radius: 8px;
             color: #fff;
             outline: none;
+            font-size: 0.95rem;
             transition: all 0.3s;
         }
 
-        input:focus, select:focus {
+        body.light-mode input, body.light-mode select, body.light-mode textarea {
+            color: var(--text-color);
+        }
+
+        /* Menu de dias customizado para contraste escuro */
+        select {
+            background-color: var(--select-bg);
+            cursor: pointer;
+        }
+
+        select option {
+            background-color: var(--select-bg);
+            color: var(--text-color);
+        }
+
+        input:focus, select:focus, textarea:focus {
             border-color: var(--neon-pink);
             box-shadow: 0 0 10px var(--neon-pink-glow);
         }
@@ -260,19 +274,12 @@
             margin-top: 3px;
         }
 
-        /* Gráfico de Visão Geral */
-        .chart-placeholder {
-            height: 100px;
-            background: linear-gradient(transparent 95%, rgba(255,0,127,0.05) 95%),
-                        linear-gradient(90deg, transparent 95%, rgba(255,0,127,0.05) 95%);
-            background-size: 15px 15px;
-            border-radius: 8px;
-            border: 1px dashed var(--glass-border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-muted);
-            font-size: 0.85rem;
+        /* Bloco de Anotações (Visão Geral) */
+        .notebook-area {
+            width: 100%;
+            height: 150px;
+            resize: none;
+            line-height: 1.5;
         }
 
         @keyframes fadeIn {
@@ -282,6 +289,8 @@
     </style>
 </head>
 <body>
+
+    <button id="themeToggle" class="theme-btn">🌙 Modo Escuro</button>
 
     <header>
         <h1>NuLimite</h1>
@@ -340,10 +349,8 @@
         <section style="display: flex; flex-direction: column; gap: 20px;">
             
             <div class="glass-panel">
-                <h2>📊 Visão Geral</h2>
-                <div class="chart-placeholder">
-                    <p>[ Gráfico de Distribuição ]</p>
-                </div>
+                <h2>📝 Visão Geral (Anotações)</h2>
+                <textarea id="generalNotes" class="notebook-area" placeholder="Digite suas metas ou observações aqui da semana..."></textarea>
             </div>
 
             <div class="glass-panel">
@@ -366,47 +373,34 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
-            // --- LÓGICA DO CRONOGRAMA ---
+            // --- VARIÁVEIS DO CRONOGRAMA ---
             const addSubjectForm = document.getElementById('addSubjectForm');
             const subjectsContainer = document.getElementById('subjectsContainer');
+            const newSubjectNameInput = document.getElementById('newSubjectName');
+            const generalNotes = document.getElementById('generalNotes');
 
+            // --- CLIQUE NAS TAGS PARA PREENCHER O INPUT ---
+            subjectsContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('subject-tag')) {
+                    newSubjectNameInput.value = e.target.textContent;
+                    newSubjectNameInput.focus();
+                }
+            });
+
+            // --- EVENTO DE ADICIONAR MATÉRIA ---
             addSubjectForm.addEventListener('submit', function(e) {
                 e.preventDefault();
-                const name = document.getElementById('newSubjectName').value.trim();
+                const name = newSubjectNameInput.value.trim();
                 const day = document.getElementById('targetDay').value;
                 const time = document.getElementById('targetTime').value;
 
-                // Chama a função que cria visualmente o item na tela
                 criarElementoMateria(name, day, time);
-                
                 addTag(name);
                 addSubjectForm.reset();
-                
-                // SALVA no navegador sempre que uma nova matéria é adicionada
                 salvarMaterias();
-// --- LÓGICA DE TEMA CLARO / ESCURO ---
-            const themeToggle = document.getElementById('themeToggle');
-            const temaSalvo = localStorage.getItem('NuLimite_tema');
-            
-            if (temaSalvo === 'claro') {
-                document.body.classList.add('light-mode');
-                themeToggle.textContent = '☀️ Modo Claro';
-            }
-
-            themeToggle.addEventListener('click', () => {
-                document.body.classList.toggle('light-mode');
-                
-                if (document.body.classList.contains('light-mode')) {
-                    localStorage.setItem('NuLimite_tema', 'claro');
-                    themeToggle.textContent = '☀️ Modo Claro';
-                } else {
-                    localStorage.setItem('NuLimite_tema', 'escuro');
-                    themeToggle.textContent = '🌙 Modo Escuro';
-                }
-            });
             });
 
-            // Função isolada para criar a caixinha da matéria (usada na criação e no carregamento)
+            // --- CRIAÇÃO DOS ITENS NO CRONOGRAMA ---
             function criarElementoMateria(name, day, time) {
                 const item = document.createElement('div');
                 item.className = 'scheduled-item';
@@ -418,6 +412,7 @@
                 }
             }
 
+            // --- GERAÇÃO DEDUPICADA DE TAGS ---
             function addTag(name) {
                 const tags = Array.from(subjectsContainer.querySelectorAll('.subject-tag')).map(t => t.textContent.toLowerCase());
                 if (!tags.includes(name.toLowerCase())) {
@@ -428,47 +423,66 @@
                 }
             }
 
-            // --- FUNÇÕES DE SALVAMENTO (LOCALSTORAGE) ---
-            
+            // --- SALVAMENTO LOCALSTORAGE ---
             function salvarMaterias() {
                 const materiasParaSalvar = [];
-                
-                // Varre cada coluna de dia para coletar as matérias inseridas nela
                 document.querySelectorAll('.day-column').forEach(coluna => {
                     const day = coluna.getAttribute('data-day');
                     const itens = coluna.querySelectorAll('.scheduled-item');
                     
                     itens.forEach(item => {
                         const name = item.querySelector('strong').textContent;
-                        // Remove o emoji de relógio "⏰ " para pegar apenas o texto da hora
                         const time = item.querySelector('.time').textContent.replace('⏰ ', '').trim();
-                        
                         materiasParaSalvar.push({ name, day, time });
                     });
                 });
-                
-                // Grava a lista completa no armazenamento local do navegador
                 localStorage.setItem('NuLimite_materias', JSON.stringify(materiasParaSalvar));
             }
 
             function carregarMaterias() {
                 const dadosSalvos = localStorage.getItem('NuLimite_materias');
-                
                 if (dadosSalvos) {
                     const materias = JSON.parse(dadosSalvos);
-                    
                     materias.forEach(materia => {
-                        // Recria o item visual na coluna correta
                         criarElementoMateria(materia.name, materia.day, materia.time);
-                        // Recria a tag correspondente embaixo
                         addTag(materia.name);
                     });
                 }
+
+                // Carrega também o bloco de notas
+                const notasSalvas = localStorage.getItem('NuLimite_notas');
+                if (notasSalvas) {
+                    generalNotes.value = notasSalvas;
+                }
             }
 
-            // Carrega automaticamente tudo o que estiver salvo assim que a página abre
-            carregarMaterias();
+            // --- SALVAMENTO AUTOMÁTICO DO BLOCO DE NOTAS ---
+            generalNotes.addEventListener('input', () => {
+                localStorage.setItem('NuLimite_notas', generalNotes.value);
+            });
 
+            // --- LÓGICA DE TEMA CLARO / ESCURO ---
+            const themeToggle = document.getElementById('themeToggle');
+            const temaSalvo = localStorage.getItem('NuLimite_tema');
+            
+            if (temaSalvo === 'claro') {
+                document.body.classList.add('light-mode');
+                themeToggle.textContent = '☀️ Modo Claro';
+            }
+
+            themeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('light-mode');
+                if (document.body.classList.contains('light-mode')) {
+                    localStorage.setItem('NuLimite_tema', 'claro');
+                    themeToggle.textContent = '☀️ Modo Claro';
+                } else {
+                    localStorage.setItem('NuLimite_tema', 'escuro');
+                    themeToggle.textContent = '🌙 Modo Escuro';
+                }
+            });
+
+            // Inicializa dados salvos
+            carregarMaterias();
 
             // --- LÓGICA DO RELÓGIO ATUAL ---
             const liveClock = document.getElementById('liveClock');
@@ -512,6 +526,7 @@
                 clearInterval(countdown);
                 timerDisplay.textContent = `${String(minutesInput.value).padStart(2, '0')}:00`;
             });
-        });    </script>
+        });
+    </script>
 </body>
 </html>
