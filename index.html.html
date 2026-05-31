@@ -14,7 +14,7 @@
             --text-color: #e1e1e6;
             --text-muted: #8d8d99;
             --glass-border: rgba(255, 255, 255, 0.08);
-            --select-bg: #1c1c1f; /* Fundo escuro personalizado para o menu de dias */
+            --select-bg: #1c1c1f;
             --input-bg: rgba(0, 0, 0, 0.3);
         }
 
@@ -29,11 +29,19 @@
             --input-bg: rgba(255, 255, 255, 0.5);
         }
 
-        /* --- ESTILO DO BOTÃO DE TEMA --- */
-        .theme-btn {
+        /* --- CONTROLES DE CUSTOMIZAÇÃO (TOPO DIREITO) --- */
+        .settings-menu {
             position: absolute;
             top: 20px;
             right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .theme-btn {
             padding: 8px 16px;
             border: 2px solid var(--neon-pink);
             background: transparent;
@@ -42,13 +50,39 @@
             border-radius: 20px;
             font-weight: bold;
             transition: 0.3s;
-            z-index: 1000;
         }
 
         .theme-btn:hover {
             background: var(--neon-pink);
             color: #fff;
             box-shadow: 0 0 10px var(--neon-pink-glow);
+        }
+
+        .color-picker-container {
+            display: flex;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 6px 10px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .color-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: 0.2s;
+        }
+
+        .color-dot:hover {
+            transform: scale(1.2);
+        }
+
+        .color-dot.active {
+            border-color: #fff;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
         }
 
         * {
@@ -80,7 +114,7 @@
             text-shadow: 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink-glow);
         }
 
-        /* Layout Grid Principal de 3 Colunas */
+        /* Layout Grid Principal */
         .dashboard {
             display: grid;
             grid-template-columns: 1fr 2fr 1fr;
@@ -90,12 +124,10 @@
         }
 
         @media (max-width: 1200px) {
-            .dashboard {
-                grid-template-columns: 1fr;
-            }
+            .dashboard { grid-template-columns: 1fr; }
         }
 
-        /* Painéis de Vidro (Glassmorphism) */
+        /* Painéis de Vidro */
         .glass-panel {
             background: var(--card-bg);
             backdrop-filter: blur(12px);
@@ -109,11 +141,44 @@
             gap: 15px;
         }
 
-        h2 {
-            font-size: 1.2rem;
+        .panel-header-inline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             border-bottom: 2px solid var(--glass-border);
             padding-bottom: 8px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
             color: #fff;
+        }
+
+        /* O contador de matérias */
+        .counter-badge {
+            background: var(--neon-pink);
+            color: #fff;
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: bold;
+            box-shadow: 0 0 8px var(--neon-pink-glow);
+        }
+
+        /* Painel Motivacional */
+        .motivation-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px dashed var(--neon-pink);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 0.9rem;
+            font-style: italic;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .motivation-box:hover {
+            background: rgba(255, 255, 255, 0.07);
         }
 
         /* Tags de Matérias */
@@ -162,16 +227,8 @@
             color: var(--text-color);
         }
 
-        /* Menu de dias customizado para contraste escuro */
-        select {
-            background-color: var(--select-bg);
-            cursor: pointer;
-        }
-
-        select option {
-            background-color: var(--select-bg);
-            color: var(--text-color);
-        }
+        select { background-color: var(--select-bg); cursor: pointer; }
+        select option { background-color: var(--select-bg); color: var(--text-color); }
 
         input:focus, select:focus, textarea:focus {
             border-color: var(--neon-pink);
@@ -219,7 +276,6 @@
         .btn-secondary:hover {
             border-color: #fff;
             color: #fff;
-            box-shadow: none;
         }
 
         /* Calendário Semanal */
@@ -257,6 +313,7 @@
             gap: 8px;
         }
 
+        /* Item agendado modificado para incluir o X */
         .scheduled-item {
             background: rgba(255, 255, 255, 0.06);
             border-left: 3px solid var(--neon-pink);
@@ -264,7 +321,16 @@
             border-radius: 6px;
             font-size: 0.8rem;
             text-align: left;
+            position: relative;
             animation: fadeIn 0.3s ease-in-out;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .scheduled-item .content-wrapper {
+            flex: 1;
+            padding-right: 5px;
         }
 
         .scheduled-item .time {
@@ -274,7 +340,23 @@
             margin-top: 3px;
         }
 
-        /* Bloco de Anotações (Visão Geral) */
+        /* Estilo do botão Xis */
+        .delete-btn {
+            background: transparent !important;
+            color: var(--text-muted) !important;
+            border: none;
+            padding: 0 4px !important;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: color 0.2s;
+            box-shadow: none !important;
+        }
+        .delete-btn:hover {
+            color: #ff3b30 !important;
+            transform: none !important;
+        }
+
+        /* Bloco de Anotações */
         .notebook-area {
             width: 100%;
             height: 150px;
@@ -286,11 +368,35 @@
             from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* --- CONFIGURAÇÃO DE IMPRESSÃO (PDF) --- */
+        @media print {
+            body { background: #fff !important; color: #000 !important; }
+            .settings-menu, header, .form-group, h2:not(.print-title), #subjectsContainer, .notebook-area, #liveClock, #timerDisplay, .timer-controls, #minutesInput, button {
+                display: none !important;
+            }
+            .dashboard { grid-template-columns: 1fr !important; }
+            .glass-panel { background: none !important; border: none !important; box-shadow: none !important; }
+            .week-calendar { grid-template-columns: repeat(7, 1fr) !important; gap: 5px !important; }
+            .day-column { background: #f0f0f0 !important; border: 1px solid #ccc !important; min-height: auto !important; }
+            .scheduled-item { background: #fff !important; border: 1px solid #aaa !important; color: #000 !important; }
+            .delete-btn { display: none !important; }
+        }
     </style>
 </head>
 <body>
 
-    <button id="themeToggle" class="theme-btn">🌙 Modo Escuro</button>
+    <!-- Menu de Customização Unificado -->
+    <div class="settings-menu">
+        <button id="themeToggle" class="theme-btn">🌙 Modo Escuro</button>
+        <div class="color-picker-container">
+            <div class="color-dot active" data-color="#ff007f" data-glow="rgba(255, 0, 127, 0.4)" style="background: #ff007f;"></div>
+            <div class="color-dot" data-color="#ff2a2a" data-glow="rgba(255, 42, 42, 0.4)" style="background: #ff2a2a;"></div>
+            <div class="color-dot" data-color="#a020f0" data-glow="rgba(160, 32, 240, 0.4)" style="background: #a020f0;"></div>
+            <div class="color-dot" data-color="#00bfff" data-glow="rgba(0, 191, 255, 0.4)" style="background: #00bfff;"></div>
+            <div class="color-dot" data-color="#00ff88" data-glow="rgba(0, 255, 136, 0.4)" style="background: #00ff88;"></div>
+        </div>
+    </div>
 
     <header>
         <h1>NuLimite</h1>
@@ -299,10 +405,13 @@
     <main class="dashboard">
         
         <section class="glass-panel">
-            <h2>📚 Componentes</h2>
+            <div class="panel-header-inline">
+                <h2>📚 Componentes</h2>
+            </div>
             <div class="subject-tags" id="subjectsContainer">
                 <span class="subject-tag">Português</span>
                 <span class="subject-tag">Matemática</span>
+                <span class="subject-tag">Biologia</span> <!-- Biologia aqui -->
                 <span class="subject-tag">História</span>
                 <span class="subject-tag">Geografia</span>
                 <span class="subject-tag">Física</span>
@@ -331,10 +440,19 @@
                 <input type="time" id="targetTime" required>
                 <button type="submit">Inserir no Cronograma</button>
             </form>
+
+            <!-- PÍLULA DE MOTIVAÇÃO -->
+            <h2>💡 Pílula de Motivação</h2>
+            <div class="motivation-box" id="motivationBox" title="Clique para mudar a frase!">
+                ✨ Carregando frase inspiradora...
+            </div>
         </section>
 
         <section class="glass-panel">
-            <h2>📅 Cronograma Semanal</h2>
+            <div class="panel-header-inline">
+                <h2 class="print-title">📅 Cronograma Semanal</h2>
+                <span class="counter-badge" id="taskCounter">0 Matérias</span>
+            </div>
             <div class="week-calendar">
                 <div class="day-column" data-day="segunda"><h3>Seg</h3><div class="slots-container"></div></div>
                 <div class="day-column" data-day="terça"><h3>Ter</h3><div class="slots-container"></div></div>
@@ -344,6 +462,7 @@
                 <div class="day-column" data-day="sábado"><h3>Sáb</h3><div class="slots-container"></div></div>
                 <div class="day-column" data-day="domingo"><h3>Dom</h3><div class="slots-container"></div></div>
             </div>
+            <button id="printBtn" class="btn-secondary" style="margin-top: 10px; width: 100%;">🖨️ Exportar / Imprimir PDF</button>
         </section>
 
         <section style="display: flex; flex-direction: column; gap: 20px;">
@@ -373,13 +492,80 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
-            // --- VARIÁVEIS DO CRONOGRAMA ---
             const addSubjectForm = document.getElementById('addSubjectForm');
             const subjectsContainer = document.getElementById('subjectsContainer');
             const newSubjectNameInput = document.getElementById('newSubjectName');
             const generalNotes = document.getElementById('generalNotes');
+            const taskCounter = document.getElementById('taskCounter');
+            const motivationBox = document.getElementById('motivationBox');
+            const printBtn = document.getElementById('printBtn');
 
-            // --- CLIQUE NAS TAGS PARA PREENCHER O INPUT ---
+            // --- FRASES MOTIVACIONAIS ---
+            const frases = [
+                "🚀 O segredo do sucesso é a constância! Só mais um pouco hoje.",
+                "🧠 Estudar não é encher um vaso, é acender uma fogueira!",
+                "🔥 Cada minuto de foco te deixa mais perto do seu objetivo.",
+                "🎯 Você não precisa ser perfeito, só precisa fazer melhor que ontem.",
+                "⚡ Grandes conquistas são feitas de pequenos hábitos diários. Vai com tudo!",
+                "📚 A mente que se abre a uma nova ideia jamais voltará ao seu tamanho original.",
+                "🏆 Seu futuro eu vai te agradecer pelo esforço que você está fazendo agora."
+            ];
+
+            function mudarFrase() {
+                const random = Math.floor(Math.random() * frases.length);
+                motivationBox.textContent = frases[random];
+            }
+            motivationBox.addEventListener('click', mudarFrase);
+            mudarFrase();
+
+            // --- SISTEMA DE SOM DIGITAL ---
+            function tocarAlarmeSom() {
+                try {
+                    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    
+                    // Som 1 (Bip Alto)
+                    let osc1 = audioCtx.createOscillator();
+                    let gain1 = audioCtx.createGain();
+                    osc1.type = 'sine';
+                    osc1.frequency.setValueAtTime(880, audioCtx.currentTime); // Nota Lá
+                    gain1.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain1.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                    osc1.connect(gain1);
+                    gain1.connect(audioCtx.destination);
+                    osc1.start();
+                    osc1.stop(audioCtx.currentTime + 0.4);
+
+                    // Som 2 (Bip Harmônico atrasado)
+                    setTimeout(() => {
+                        let osc2 = audioCtx.createOscillator();
+                        let gain2 = audioCtx.createGain();
+                        osc2.type = 'sine';
+                        osc2.frequency.setValueAtTime(1046.5, audioCtx.currentTime); // Nota Dó
+                        gain2.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                        gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                        osc2.connect(gain2);
+                        gain2.connect(audioCtx.destination);
+                        osc2.start();
+                        osc2.stop(audioCtx.currentTime + 0.5);
+                    }, 150);
+
+                } catch(e) {
+                    console.log("AudioContext não suportado ou bloqueado.");
+                }
+            }
+
+            // --- BOTAO DE IMPRIMIR ---
+            printBtn.addEventListener('click', () => {
+                window.print();
+            });
+
+            // --- LÓGICA DO CONTADOR ---
+            function atualizarContador() {
+                const total = document.querySelectorAll('.scheduled-item').length;
+                taskCounter.textContent = `${total} ${total === 1 ? 'Matéria' : 'Matérias'}`;
+            }
+
+            // --- CLIQUE NAS TAGS ---
             subjectsContainer.addEventListener('click', (e) => {
                 if (e.target.classList.contains('subject-tag')) {
                     newSubjectNameInput.value = e.target.textContent;
@@ -398,13 +584,26 @@
                 addTag(name);
                 addSubjectForm.reset();
                 salvarMaterias();
+                atualizarContador();
             });
 
             // --- CRIAÇÃO DOS ITENS NO CRONOGRAMA ---
             function criarElementoMateria(name, day, time) {
                 const item = document.createElement('div');
                 item.className = 'scheduled-item';
-                item.innerHTML = `<strong>${name}</strong><span class="time">⏰ ${time}</span>`;
+                item.innerHTML = `
+                    <div class="content-wrapper">
+                        <strong>${name}</strong>
+                        <span class="time">⏰ ${time}</span>
+                    </div>
+                    <button class="delete-btn" title="Excluir">❌</button>
+                `;
+
+                item.querySelector('.delete-btn').addEventListener('click', () => {
+                    item.remove();
+                    salvarMaterias();
+                    atualizarContador();
+                });
 
                 const container = document.querySelector(`.day-column[data-day="${day}"] .slots-container`);
                 if (container) {
@@ -412,7 +611,7 @@
                 }
             }
 
-            // --- GERAÇÃO DEDUPICADA DE TAGS ---
+            // --- GERAÇÃO DE TAGS ---
             function addTag(name) {
                 const tags = Array.from(subjectsContainer.querySelectorAll('.subject-tag')).map(t => t.textContent.toLowerCase());
                 if (!tags.includes(name.toLowerCase())) {
@@ -449,14 +648,13 @@
                     });
                 }
 
-                // Carrega também o bloco de notas
                 const notasSalvas = localStorage.getItem('NuLimite_notas');
                 if (notasSalvas) {
                     generalNotes.value = notasSalvas;
                 }
+                atualizarContador();
             }
 
-            // --- SALVAMENTO AUTOMÁTICO DO BLOCO DE NOTAS ---
             generalNotes.addEventListener('input', () => {
                 localStorage.setItem('NuLimite_notas', generalNotes.value);
             });
@@ -481,7 +679,38 @@
                 }
             });
 
-            // Inicializa dados salvos
+            // --- LÓGICA DO SELETOR DE CORES NEON ---
+            const colorDots = document.querySelectorAll('.color-dot');
+            
+            function aplicarCorDestaque(cor, brilho) {
+                document.documentElement.style.setProperty('--neon-pink', cor);
+                document.documentElement.style.setProperty('--neon-pink-glow', brilho);
+            }
+
+            colorDots.forEach(dot => {
+                dot.addEventListener('click', () => {
+                    document.querySelector('.color-dot.active').classList.remove('active');
+                    dot.classList.add('active');
+
+                    const novaCor = dot.getAttribute('data-color');
+                    const novoBrilho = dot.getAttribute('data-glow');
+
+                    aplicarCorDestaque(novaCor, novoBrilho);
+
+                    localStorage.setItem('NuLimite_cor', novaCor);
+                    localStorage.setItem('NuLimite_brilho', novoBrilho);
+                });
+            });
+
+            const corSalva = localStorage.getItem('NuLimite_cor');
+            const brilhoSalvo = localStorage.getItem('NuLimite_brilho');
+            if (corSalva && brilhoSalvo) {
+                aplicarCorDestaque(corSalva, brilhoSalvo);
+                document.querySelector('.color-dot.active').classList.remove('active');
+                const dotCorrespondente = document.querySelector(`.color-dot[data-color="${corSalva}"]`);
+                if (dotCorrespondente) dotCorrespondente.classList.add('active');
+            }
+
             carregarMaterias();
 
             // --- LÓGICA DO RELÓGIO ATUAL ---
@@ -492,7 +721,7 @@
             setInterval(updateClock, 1000);
             updateClock();
 
-            // --- LÓGICA DO CRONÔMETRO ---
+            // --- LÓGICA DO CRONÔMETRO COM ALARME SONORO ---
             let countdown;
             const timerDisplay = document.getElementById('timerDisplay');
             const minutesInput = document.getElementById('minutesInput');
@@ -516,6 +745,7 @@
 
                     if (timeLeft <= 0) {
                         clearInterval(countdown);
+                        tocarAlarmeSom(); // Toca o efeito sonoro digital
                         alert("🚨 Alarme! Fim da sua sessão de estudos.");
                     }
                     timeLeft--;
